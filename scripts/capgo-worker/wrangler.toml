@@ -1,0 +1,8 @@
+name = "capgo-update-server"
+main = "src/index.js"
+compatibility_date = "2025-12-26"
+
+# 绑定 R2 存储桶
+[[r2_buckets]]
+binding = "BUILD_BUCKET"
+bucket_name = "capgo-builds"

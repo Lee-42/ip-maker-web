@@ -1,0 +1,33 @@
+:root {
+  /* Light Theme (Default) */
+  --body-bg-color: #f5f7fa;
+  --card-bg-color: #ffffff;
+  --text-color: #333333;
+  --text-color-secondary: #666666;
+  --border-color: #eeeeee;
+  --hover-bg-color: #f5f5f5;
+  --active-bg-color: #e6f7ff;
+  --active-text-color: #1890ff;
+  --resize-handle-hover: #18a058;
+}
+
+[data-theme='dark'] {
+  /* Dark Theme */
+  --body-bg-color: #101014;
+  --card-bg-color: #18181c;
+  --text-color: #rgba(255, 255, 255, 0.82);
+  --text-color-secondary: rgba(255, 255, 255, 0.52);
+  --border-color: #2d2d30;
+  --hover-bg-color: #26262a;
+  --active-bg-color: #1a2a38;
+  --active-text-color: #63e2b7;
+  --resize-handle-hover: #63e2b7;
+}
+
+body {
+  background-color: var(--body-bg-color);
+  color: var(--text-color);
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}

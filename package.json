@@ -1,0 +1,69 @@
+{
+  "name": "ip-marker-webapp",
+  "version": "1.0.4",
+  "private": true,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lee-42/ip-marker-webapp.git"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --fix --cache",
+    "format": "prettier --write src/",
+    "genapk": "vite build && npx cap sync && cd android && ./gradlew assembleRelease",
+    "build-zip": "pnpm build && cd dist && zip -r -q ../dist-$npm_package_version.zip . && echo \"📦 Created dist-$npm_package_version.zip\""
+  },
+  "dependencies": {
+    "@panzoom/panzoom": "^4.6.1",
+    "@tiptap/core": "^3.11.1",
+    "@tiptap/extension-mention": "^3.11.1",
+    "@tiptap/extension-placeholder": "^3.11.1",
+    "@tiptap/starter-kit": "^3.11.1",
+    "@tiptap/vue-3": "^3.11.1",
+    "@vueuse/motion": "^3.0.3",
+    "marked": "^17.0.1",
+    "md-editor-v3": "^6.3.1",
+    "naive-ui": "^2.40.3",
+    "pinia": "^3.0.3",
+    "uuid": "^10.0.0",
+    "vfonts": "^0.0.3",
+    "vue": "^3.5.22",
+    "vue-picture-cropper": "^0.7.0",
+    "vue-router": "^4.6.3",
+    "vue3-carousel": "^0.17.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.2",
+    "@types/marked": "^6.0.0",
+    "@types/node": "^22.18.11",
+    "@types/uuid": "^10.0.0",
+    "@vicons/ionicons5": "^0.13.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue-jsx": "^5.1.1",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/tsconfig": "^0.8.1",
+    "autoprefixer": "^10.4.20",
+    "eruda": "^3.4.3",
+    "eslint": "^9.37.0",
+    "eslint-plugin-vue": "~10.5.0",
+    "jiti": "^2.6.1",
+    "npm-run-all2": "^8.0.4",
+    "postcss": "^8.4.49",
+    "prettier": "3.6.2",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.9.0",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^7.1.11",
+    "vite-plugin-vue-devtools": "^8.0.3",
+    "vue-tsc": "^3.1.1"
+  }
+}
