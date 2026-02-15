@@ -81,7 +81,8 @@ defineEmits<{
 }
 
 .header {
-  padding: 16px;
+  height: 60px;
+  padding: 0 16px;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;

@@ -9,19 +9,37 @@
   --active-bg-color: #e6f7ff;
   --active-text-color: #1890ff;
   --resize-handle-hover: #18a058;
+
+  /* AgentUI Light */
+  --input-bg-color: #f5f5f5;
+  --user-message-bg: #fff491;
+  --ai-message-bg: #f5f5f5;
+  --tag-bg: #fff599;
+  --tag-text: #333333;
+  --code-bg: #f5f5f5;
+  --button-hover-bg: #f9f9f9;
 }
 
 [data-theme='dark'] {
   /* Dark Theme */
   --body-bg-color: #101014;
   --card-bg-color: #18181c;
-  --text-color: #rgba(255, 255, 255, 0.82);
+  --text-color: rgba(255, 255, 255, 0.82);
   --text-color-secondary: rgba(255, 255, 255, 0.52);
   --border-color: #2d2d30;
   --hover-bg-color: #26262a;
   --active-bg-color: #1a2a38;
   --active-text-color: #63e2b7;
   --resize-handle-hover: #63e2b7;
+
+  /* AgentUI Dark */
+  --input-bg-color: #26262a;
+  --user-message-bg: #594f0e; /* Darker yellow/brown */
+  --ai-message-bg: #26262a;
+  --tag-bg: #594f0e;
+  --tag-text: rgba(255, 255, 255, 0.82);
+  --code-bg: #1e1e22;
+  --button-hover-bg: #2d2d30;
 }
 
 body {

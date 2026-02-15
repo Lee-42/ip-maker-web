@@ -11,7 +11,7 @@ import type { PageRes } from './asset'
 
 // 获取模板列表
 export function getTemplates(params: any): Promise<APIResponse<{ list: WownowTemplate[]; total: number }>> {
-  return apiClient.get('/v1/template/page', { params })
+  return apiClient.get('/v1/template/list', { params })
 }
 
 // 获取模板详情

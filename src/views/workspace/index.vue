@@ -12,14 +12,24 @@
       />
     </div>
     <div class="middle-column">
-      <story-content v-if="currentStory" :story="currentStory" />
-      <div v-else class="empty-story">
-        <n-empty description="Select a story to view details" />
+      <div class="column-header">
+        <h2 class="column-title">Writer</h2>
+      </div>
+      <div class="column-content">
+        <story-content v-if="currentStory" :story="currentStory" />
+        <div v-else class="empty-story">
+          <n-empty description="Select a story to view details" />
+        </div>
       </div>
     </div>
     <div class="resize-handle" @mousedown="startResize"></div>
     <div class="right-column" :style="{ width: rightColumnWidth + 'px' }">
-      <chat-panel />
+      <div class="column-header">
+        <h2 class="column-title">Painter</h2>
+      </div>
+      <div class="column-content">
+        <chat-panel />
+      </div>
     </div>
 
     <create-story-modal
@@ -205,11 +215,39 @@ const stopResize = () => {
 .middle-column {
   flex: 1;
   background-color: var(--card-bg-color);
-  overflow-y: auto;
-  padding: 24px;
   display: flex;
   flex-direction: column;
   min-width: 0; /* Prevent flex item from overflowing */
+  border-right: 1px solid var(--border-color);
+}
+
+.right-column {
+  background-color: var(--card-bg-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.column-header {
+  height: 60px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.column-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-color);
+}
+
+.column-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  position: relative;
 }
 
 .resize-handle {
@@ -219,16 +257,12 @@ const stopResize = () => {
   transition: background-color 0.2s;
   z-index: 10;
   border-left: 1px solid var(--border-color);
+  margin-left: -1px; /* Overlap border */
 }
 
 .resize-handle:hover,
 .resize-handle:active {
   background-color: var(--resize-handle-hover);
-}
-
-.right-column {
-  background-color: var(--card-bg-color);
-  /* border-left is handled by resize-handle visual or kept here if prefer double border */
 }
 
 .empty-story {

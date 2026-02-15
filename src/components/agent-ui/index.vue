@@ -688,7 +688,7 @@ defineExpose({
   display: flex;
   flex-direction: column;
   padding: 12px;
-  background: #f5f5f5;
+  background: var(--input-bg-color);
   border-radius: 16px;
   margin: 15px;
   margin-bottom: calc(15px + env(safe-area-inset-bottom));

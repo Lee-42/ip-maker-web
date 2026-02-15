@@ -220,7 +220,7 @@ defineExpose({
   flex: 1;
   overflow-y: auto;
   padding: 12px;
-  padding-top: calc(var(--wn-navbar-height) + 12px);
+  /* padding-top: calc(var(--wn-navbar-height) + 12px); Removed navbar dependency */
   padding-bottom: 8px;
 }
 
@@ -234,19 +234,18 @@ defineExpose({
 
 .user-message {
   align-self: flex-end;
-  background: #fff491;
+  background: var(--user-message-bg);
   max-width: 90%;
   margin-left: auto;
 }
 
 .ai-message {
   align-self: flex-start;
-  background: transparent;
-  background: #f5f5f5;
+  background: var(--ai-message-bg);
 }
 
 .user-text {
-  color: #333333;
+  color: var(--text-color);
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -264,12 +263,12 @@ defineExpose({
   width: 60px;
   height: 60px;
   border-radius: 6px;
-  background: #f5f5f5;
+  background: var(--input-bg-color);
   object-fit: cover;
 }
 
 .ai-content {
-  color: #333333;
+  color: var(--text-color);
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -277,11 +276,11 @@ defineExpose({
 
 .ai-content :deep(p) {
   margin: 0;
-  color: #333333;
+  color: var(--text-color);
 }
 
 .ai-content :deep(code) {
-  background: #f5f5f5;
+  background: var(--code-bg);
   padding: 2px 4px;
   border-radius: 4px;
   font-size: 14px;
@@ -329,7 +328,7 @@ defineExpose({
 
 .action-text {
   font-size: 14px;
-  color: #333333;
+  color: var(--text-color);
   font-weight: 600;
 }
 
@@ -338,7 +337,7 @@ defineExpose({
   align-items: center;
   gap: 2px;
   padding: 5px 8px;
-  background: #f5f5f5;
+  background: var(--input-bg-color);
   border-radius: 8px;
   cursor: pointer;
   transition: opacity 0.2s;
@@ -356,12 +355,12 @@ defineExpose({
 
 .order-text {
   font-size: 14px;
-  color: #333333;
+  color: var(--text-color);
   font-weight: 600;
 }
 
 .text-result {
-  color: #333333;
+  color: var(--text-color);
 }
 
 .error-message {
@@ -370,7 +369,7 @@ defineExpose({
 }
 
 .typing-text {
-  color: #333333;
+  color: var(--text-color);
   font-size: 16px;
   margin-bottom: 10px;
 }
@@ -400,7 +399,7 @@ defineExpose({
 }
 
 .loading-image-container {
-  background: #f5f5f5;
+  background: var(--input-bg-color);
   border-radius: 12px;
   width: 160px;
   height: 160px;
@@ -411,7 +410,7 @@ defineExpose({
 }
 
 .loading-image-container.blinking {
-  background-color: #fafafa;
+  background-color: var(--hover-bg-color);
 }
 
 .loading-image {

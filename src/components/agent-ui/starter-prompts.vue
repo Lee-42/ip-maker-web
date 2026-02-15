@@ -81,25 +81,25 @@ const emit = defineEmits<Emits>()
 
 .starter-prompts-title {
   font-size: 16px;
-  color: #777777;
+  color: var(--text-color-secondary);
   margin-bottom: 12px;
   font-weight: 500;
   line-height: 24px;
 }
 
 .starter-prompt-item {
-  background: #f5f5f5;
+  background: var(--button-hover-bg);
   border-radius: 16px;
   padding: 12px 16px;
   margin-bottom: 12px;
   width: 100%;
-  color: #333333;
+  color: var(--text-color);
   font-size: 16px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .starter-prompt-item:hover {
-  background: #f9f9f9;
+  background: var(--active-bg-color);
 }
 </style>

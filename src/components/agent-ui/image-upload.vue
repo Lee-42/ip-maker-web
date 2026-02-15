@@ -201,7 +201,7 @@ const replaceImage = async (index: number) => {
   width: 70px;
   height: 70px;
   border-radius: 10px;
-  background: #fcfcfc;
+  background: var(--input-bg-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -210,17 +210,17 @@ const replaceImage = async (index: number) => {
   flex-shrink: 0;
   transition: background 0.2s;
   position: relative;
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed var(--border-color);
 }
 
 .upload-button:hover {
-  background: #e8e8e8;
-  border-color: #18a058;
+  background: var(--hover-bg-color);
+  border-color: var(--primary-color, #18a058);
 }
 
 .upload-count {
   font-size: 10px;
-  color: #aaa;
+  color: var(--text-color-secondary);
   line-height: 1;
   margin-top: 4px;
 }

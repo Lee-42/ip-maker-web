@@ -573,8 +573,8 @@ onBeforeUnmount(() => {
 .text-input {
   flex: 1;
   font-size: 16px;
-  background: #f5f5f5;
-  color: #333333;
+  background: var(--input-bg-color);
+  color: var(--text-color);
   border: none;
   outline: none;
   font-family: inherit;
@@ -599,7 +599,7 @@ onBeforeUnmount(() => {
 .text-input :deep(.ProseMirror p.is-editor-empty:first-child::before) {
   content: attr(data-placeholder);
   float: left;
-  color: #999;
+  color: var(--text-color-secondary);
   pointer-events: none;
   height: 0;
 }
@@ -619,12 +619,12 @@ onBeforeUnmount(() => {
 }
 
 .text-input :deep(.ProseMirror)::-webkit-scrollbar-thumb {
-  background: #d0d0d0;
+  background: var(--border-color);
   border-radius: 2px;
 }
 
 .text-input :deep(.ProseMirror)::-webkit-scrollbar-thumb:hover {
-  background: #b0b0b0;
+  background: var(--text-color-secondary);
 }
 
 /* Style Tag */
@@ -633,8 +633,8 @@ onBeforeUnmount(() => {
 .text-input :deep(.prompt-tag) {
   display: inline-flex;
   align-items: center;
-  background-color: #fff599;
-  color: #333333;
+  background-color: var(--tag-bg);
+  color: var(--tag-text);
   padding: 2px 4px;
   border-radius: 4px;
   font-size: 14px;
