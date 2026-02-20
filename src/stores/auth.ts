@@ -14,7 +14,7 @@ export interface UserInfo {
   id: number
   nickname: string
   avatar: string
-  phone?: string
+  mobile?: string
   email?: string
   // 添加其他用户信息字段
 }
@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
       id: payload.user.id,
       nickname: payload.user.nickname,
       avatar: payload.user.avatar,
-      phone: payload.user.phone,
+      mobile: payload.user.mobile,
       email: payload.user.email,
     })
     setLoggedIn(true)
@@ -82,7 +82,7 @@ export const useAuthStore = defineStore('auth', () => {
         id: user.value.id,
         nickname: user.value.nickname,
         avatar: user.value.avatar,
-        phone: user.value.phone,
+        mobile: user.value.mobile,
         email: user.value.email,
       })
     }

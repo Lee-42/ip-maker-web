@@ -31,7 +31,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0', // 允许局域网访问，方便移动端调试
-    port: 5173,
+    port: 5174,
     open: true,
   },
 })

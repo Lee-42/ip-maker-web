@@ -36,7 +36,7 @@ export interface StoredUserInfo {
   id: number
   nickname: string
   avatar: string
-  phone?: string
+  mobile?: string
   email?: string
 }
 

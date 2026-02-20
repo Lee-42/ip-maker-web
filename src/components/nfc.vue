@@ -155,7 +155,7 @@ const mediaType = computed(() => {
 })
 
 const defaultNfcTitle = computed(() => {
-  return `WOWNOW (${new Date().toLocaleDateString('en-US')})`
+  return `IPMAKER (${new Date().toLocaleDateString('en-US')})`
 })
 
 const onAddNfc = () => {

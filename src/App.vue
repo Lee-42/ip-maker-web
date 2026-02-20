@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { RouterView } from 'vue-router'
 import LoginModal from '@/components/login-modal.vue'
+import UserProfile from '@/components/user-profile.vue' // 导入 UserProfile 组件
 import {
   NConfigProvider,
   NMessageProvider,
@@ -50,6 +51,9 @@ onMounted(() => {
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>
+          <div class="user-profile-container">
+            <UserProfile />
+          </div>
           <RouterView v-slot="{ Component }">
             <transition name="page" mode="out-in">
               <component :is="Component" />
@@ -131,6 +135,13 @@ body {
 .theme-toggle {
   position: fixed;
   bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+}
+
+.user-profile-container {
+  position: fixed;
+  top: 24px;
   right: 24px;
   z-index: 1000;
 }

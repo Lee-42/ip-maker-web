@@ -195,20 +195,12 @@ export function useGoogleLogin(options: UseGoogleLoginOptions = {}) {
       const res = await googleLogin(response.credential)
 
       if (res.code === 0 && res.data) {
-        const { token, user, expires_in } = res.data
-
-        const userInfo = {
-          id: user.id,
-          nickname: user.nickname || 'Google User',
-          avatar: user.avatar || '',
-          phone: user.phone || '',
-          email: user.email || '',
-        }
+        const { token, userInfo, expiresAt } = res.data
 
         authStore.login({
           user: userInfo,
           token: token,
-          expiresIn: expires_in,
+          expiresIn: expiresAt,
         })
 
         loadingMsg?.destroy()
@@ -242,7 +234,7 @@ export function useGoogleLogin(options: UseGoogleLoginOptions = {}) {
       isAvailable.value = false
       return
     }
-
+    console.log('clientId', clientId)
     const element = buttonElement instanceof HTMLElement ? buttonElement : buttonElement.value
     if (!element) {
       console.warn('[Google Login] 按钮容器不存在')
@@ -321,7 +313,7 @@ export function useGoogleLogin(options: UseGoogleLoginOptions = {}) {
               const message = isLocalIP
                 ? `Google 登录不支持局域网 IP\n请使用 ngrok 创建 HTTPS 隧道\n详见控制台说明`
                 : `Google 登录配置错误\n请在控制台查看解决方案\n当前来源: ${currentOrigin}`
-              
+
               console.error(message)
               alert(message)
             }

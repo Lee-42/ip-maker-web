@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useChatStore } from '@/stores/chat'
+
+import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,7 +50,16 @@ const router = createRouter({
 
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
-  next()
+  const authStore = useAuthStore()
+  const isLoggedIn = authStore.isLoggedIn
+
+  if (!isLoggedIn && to.name !== 'login') {
+    // 如果用户未登录且目标路由不是登录页，则重定向到登录页
+    next({ name: 'login' })
+  } else {
+    // 如果用户已登录或目标是登录页，则正常放行
+    next()
+  }
 })
 
 // 全局后置守卫

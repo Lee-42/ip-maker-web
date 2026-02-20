@@ -28,7 +28,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import AgentUI from '@/components/agent-ui/index.vue'
 import type { ChatRecord, GenerateImageOptions } from '@/components/agent-ui/types'
-import { COIN_NEGATIVE_PROMPT, WOWNOW_CHAT_URL, productTypeOptions } from '@/lib/constants'
+import { COIN_NEGATIVE_PROMPT, IPMAKER_CHAT_URL, productTypeOptions } from '@/lib/constants'
 import { TemplateLabel } from '@/types/template'
 import { OrientationType } from '@/types/asset'
 import PromptSelector from '@/views/chat/components/prompt-selector.vue'
@@ -63,7 +63,7 @@ const chatTemplate = computed(() => chatStore.chatTemplate)
 const promptStyle = computed(() => chatStore.promptStyle)
 const templatePrompt = computed(() => chatStore.templatePrompt)
 const prompts = computed(() => chatStore.prompts)
-const apiUrl = WOWNOW_CHAT_URL + '/v1/chat'
+const apiUrl = IPMAKER_CHAT_URL + '/v1/chat'
 
 // 根据 chatTemplate 计算 generateImageOptions
 const generateImageOptions = computed((): GenerateImageOptions => {

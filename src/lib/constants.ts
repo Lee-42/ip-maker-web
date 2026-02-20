@@ -8,11 +8,11 @@ const resolveBaseUrl = (value: string | undefined, fallback: string) => {
   return trimmed.replace(/\/+$/, '')
 }
 
-export const WOWNOW_API_URL = resolveBaseUrl(import.meta.env.VITE_WOWNOW_API_BASE, '')
+export const IPMAKER_API_URL = resolveBaseUrl(import.meta.env.VITE_IPMAKER_API_BASE, '')
 
-export const WOWNOW_NFC_URL = resolveBaseUrl(import.meta.env.VITE_WOWNOW_NFC_BASE, '')
+export const IPMAKER_NFC_URL = resolveBaseUrl(import.meta.env.VITE_IPMAKER_NFC_BASE, '')
 
-export const WOWNOW_CHAT_URL = resolveBaseUrl(import.meta.env.VITE_WOWNOW_CHAT_BASE, '')
+export const IPMAKER_CHAT_URL = resolveBaseUrl(import.meta.env.VITE_IPMAKER_CHAT_BASE, '')
 
 export const CAPGO_UPDATE_URL = resolveBaseUrl(import.meta.env.VITE_CAPGO_UPDATE_URL, '')
 

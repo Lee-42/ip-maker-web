@@ -3,7 +3,7 @@
     :show="show"
     @update:show="$emit('update:show', $event)"
     preset="card"
-    title="Create New IP"
+    :title="isEdit ? 'Edit IP' : 'Create New IP'"
     style="width: 500px"
     :bordered="false"
   >
@@ -18,40 +18,49 @@
       <n-form-item label="IP Name" path="name">
         <n-input v-model:value="formValue.name" placeholder="Enter IP Name" />
       </n-form-item>
-      <n-form-item label="IP Image" path="images">
-        <image-upload v-model="formValue.images" :max-count="1" />
+      <n-form-item label="Description" path="description">
+        <n-input type="textarea" v-model:value="formValue.description" placeholder="Enter Description" />
+      </n-form-item>
+      <n-form-item label="IP Avatar" path="avatar">
+        <image-upload v-model="formValue.avatar" :max-count="1" />
       </n-form-item>
     </n-form>
     <template #footer>
       <div class="footer-actions">
         <n-button @click="handleCancel">Cancel</n-button>
-        <n-button type="primary" :loading="loading" @click="handleCreate">Create</n-button>
+        <n-button type="primary" :loading="loading" @click="handleSubmit">Submit</n-button>
       </div>
     </template>
   </n-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import { NModal, NForm, NFormItem, NInput, NButton, useMessage, type FormInst, type FormRules } from 'naive-ui'
 import ImageUpload from '@/components/agent-ui/image-upload.vue'
+import { createIp, updateIp } from '@/api/ip'
+import type { IP } from '@/types/ip'
 
 const props = defineProps<{
   show: boolean
+  editData?: IP | null
 }>()
 
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void
-  (e: 'success', data: { name: string; coverUrl: string }): void
+  (e: 'success'): void
 }>()
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
 
+const isEdit = computed(() => !!props.editData?.id)
+
 const formValue = reactive({
   name: '',
-  images: [] as string[],
+  description: '',
+  avatar: [] as string[],
 })
 
 const rules: FormRules = {
@@ -60,44 +69,78 @@ const rules: FormRules = {
     message: 'Please enter IP Name',
     trigger: 'blur',
   },
-  images: {
-    required: true,
+  avatar: {
+    required: false,
     type: 'array',
     message: 'Please upload an image',
     trigger: 'change',
-    validator: (_: any, value: string[]) => {
-      if (!value || value.length === 0) {
-        return new Error('Please upload an image')
-      }
-      return true
-    },
+    // validator: (_: any, value: string[]) => {
+    //   if (!value || value.length === 0) {
+    //     return new Error('Please upload an image')
+    //   }
+    //   return true
+    // },
   },
 }
+
+watch(
+  () => props.show,
+  (show) => {
+    if (show) {
+      if (props.editData && props.editData.id) {
+        formValue.name = props.editData.name || ''
+        formValue.description = props.editData.description || ''
+        formValue.avatar = props.editData.avatar ? [props.editData.avatar] : []
+      } else {
+        formValue.name = ''
+        formValue.description = ''
+        formValue.avatar = []
+      }
+    }
+  }
+)
 
 const handleCancel = () => {
   emit('update:show', false)
 }
 
-const handleCreate = (e: MouseEvent) => {
+const handleSubmit = (e: MouseEvent) => {
   e.preventDefault()
-  formRef.value?.validate((errors) => {
+  formRef.value?.validate(async (errors) => {
     if (!errors) {
       loading.value = true
-      // Simulate API call
-      setTimeout(() => {
-        const coverUrl = formValue.images[0] || ''
-        const newIp = {
+      try {
+        const payload = {
           name: formValue.name,
-          coverUrl: coverUrl,
+          description: formValue.description,
+          avatar: formValue.avatar[0] || '',
         }
-        message.success('IP Created Successfully')
-        emit('success', newIp)
-        emit('update:show', false)
+        
+        if (isEdit.value && props.editData) {
+          const res = await updateIp({ ...payload, id: props.editData.id })
+          if (res.code === 0) {
+            message.success('IP Updated Successfully')
+            emit('success')
+            emit('update:show', false)
+          } else {
+            message.error(res.msg || 'Failed to update IP')
+          }
+        } else {
+          const res = await createIp(payload as any)
+          if (res.code === 0) {
+            message.success('IP Created Successfully')
+            emit('success')
+            emit('update:show', false)
+          } else {
+            message.error(res.msg || 'Failed to create IP')
+          }
+        }
+      } catch (err: any) {
+        message.error(isEdit.value ? 'Failed to update IP' : 'Failed to create IP')
+        console.error(err)
+      } finally {
         loading.value = false
-        // Reset form
-        formValue.name = ''
-        formValue.images = []
-      }, 1000)
+      }
     } else {
       console.log(errors)
       message.error('Please verify input')

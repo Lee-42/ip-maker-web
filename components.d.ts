@@ -36,6 +36,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     StarterPrompts: typeof import('./src/components/agent-ui/starter-prompts.vue')['default']
+    UserProfile: typeof import('./src/components/user-profile.vue')['default']
     WaterfallList: typeof import('./src/components/waterfall-list.vue')['default']
   }
 }

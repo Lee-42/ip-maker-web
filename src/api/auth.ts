@@ -17,10 +17,8 @@ export interface UserInfo {
   username: string
   nickname: string
   avatar: string
-  phone: string
+  mobile: string
   email: string
-  openid: string
-  login_source: string
 }
 
 // 短信登录请求
@@ -140,10 +138,28 @@ export function login(
 // Google 登录
 export function googleLogin(
   credential: string,
-): Promise<APIResponse<{ expires_in: number; token: string; user: UserInfo }>> {
-  return apiClient.post<{ expires_in: number; token: string; user: UserInfo }>(
-    '/v1/auth/google',
+): Promise<APIResponse<{ token: string; expiresAt: number; userInfo: UserInfo }>> {
+  return apiClient.post<{ token: string; expiresAt: number; userInfo: UserInfo }>(
+    '/user/google-login',
     { credential },
+    undefined,
+    true,
+  )
+}
+
+// 邮箱登录请求
+export interface EmailLoginRequest {
+  email: string
+  password: string
+}
+
+// 邮箱登录
+export function emailLogin(
+  data: EmailLoginRequest,
+): Promise<APIResponse<{ token: string; expiresAt: string; userInfo: UserInfo }>> {
+  return apiClient.post<{ token: string; expiresAt: string; userInfo: UserInfo }>(
+    '/user/email-login',
+    data,
     undefined,
     true,
   )
@@ -157,4 +173,9 @@ export function refreshToken(): Promise<APIResponse<{ token: string; expires_in:
     undefined,
     true,
   )
+}
+
+// 退出登录
+export function logout(): Promise<APIResponse<void>> {
+  return apiClient.post<void>('/user/logout')
 }

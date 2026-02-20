@@ -40,7 +40,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   isBack: false,
-  title: 'WOWNOW',
+  title: 'IPMAKER',
   subTitle: '',
   defaultBackBehavior: true,
   iconName: 'arrow-left',

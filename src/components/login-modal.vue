@@ -225,7 +225,7 @@ const handleSMSLogin = async () => {
         id: user.id,
         nickname: user.nickname || 'User',
         avatar: user.avatar || '',
-        phone: user.phone || '',
+        mobile: user.mobile || '',
       }
 
       authStore.login({

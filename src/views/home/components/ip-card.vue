@@ -2,7 +2,7 @@
   <div class="ip-card">
     <div class="ip-card-image-wrapper">
       <n-image
-        :src="template.coverUrl"
+        :src="ip.avatar"
         class="ip-card-image"
         object-fit="cover"
         preview-disabled
@@ -18,13 +18,27 @@
       </n-image>
     </div>
     <div class="ip-card-info">
-      <div class="ip-name" :title="template.name">{{ template.name }}</div>
+      <div class="ip-header">
+        <div class="ip-name" :title="ip.name">{{ ip.name }}</div>
+        <div class="ip-actions" @click.stop>
+          <n-button text style="margin-right: 8px" @click="$emit('edit', ip)">
+            <template #icon>
+              <n-icon><create-outline /></n-icon>
+            </template>
+          </n-button>
+          <n-button text type="error" @click="$emit('delete', ip)">
+            <template #icon>
+              <n-icon><trash-outline /></n-icon>
+            </template>
+          </n-button>
+        </div>
+      </div>
       <div class="ip-meta">
         <div class="ip-date">
           <n-icon size="14" class="icon">
             <calendar-outline />
           </n-icon>
-          <span>{{ formatDate(template.createdAt) }}</span>
+          <span>{{ formatDate(ip.createdAt) }}</span>
         </div>
         <div class="ip-creator">
           <n-icon size="14" class="icon">
@@ -38,16 +52,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { WownowTemplate } from '@/types/template'
-import { NImage, NIcon } from 'naive-ui'
-import { ImageOutline, CalendarOutline, PersonOutline } from '@vicons/ionicons5'
+import type { IP } from '@/types/ip'
+import { NImage, NIcon, NButton } from 'naive-ui'
+import { ImageOutline, CalendarOutline, PersonOutline, CreateOutline, TrashOutline } from '@vicons/ionicons5'
 
 interface Props {
-  template: WownowTemplate
+  ip: IP
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<{
+  (e: 'edit', ip: IP): void
+  (e: 'delete', ip: IP): void
+}>()
 
 const formatDate = (date: Date | string) => {
   if (!date) return ''
@@ -66,11 +83,34 @@ const formatDate = (date: Date | string) => {
   cursor: pointer;
   height: 120px;
   border: 1px solid var(--border-color);
+  position: relative;
 }
 
 .ip-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.ip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.ip-actions {
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.ip-card:hover .ip-actions {
+  opacity: 1;
 }
 
 .ip-card-image-wrapper {
@@ -113,7 +153,7 @@ const formatDate = (date: Date | string) => {
   font-size: 16px;
   font-weight: 600;
   color: var(--text-color);
-  width: 100%;
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;

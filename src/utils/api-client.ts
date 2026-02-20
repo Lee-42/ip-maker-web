@@ -1,6 +1,6 @@
 import { getToken } from '@/utils/storage'
 import { useAuthStore } from '@/stores/auth'
-import { WOWNOW_API_URL } from '@/lib/constants'
+import { IPMAKER_API_URL } from '@/lib/constants'
 
 // 通用 API 客户端
 export interface APIResponse<T> {
@@ -142,4 +142,4 @@ class APIClient {
 }
 
 // 创建实例
-export const apiClient = new APIClient(WOWNOW_API_URL)
+export const apiClient = new APIClient(IPMAKER_API_URL)

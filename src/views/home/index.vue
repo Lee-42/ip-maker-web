@@ -8,16 +8,13 @@
       <div v-else-if="error" class="error-state">
         <n-empty description="Failed to load IPs">
           <template #extra>
-            <n-button size="small" @click="fetchTemplates">Retry</n-button>
+            <n-button size="small" @click="fetchIps">Retry</n-button>
           </template>
         </n-empty>
       </div>
-      <div v-else-if="templates.length === 0" class="empty-state">
-        <n-empty description="No IPs found" />
-      </div>
       <div v-else class="ip-grid">
         <!-- Create IP Card -->
-        <div class="grid-item create-card" @click="showCreateModal = true">
+        <div class="grid-item create-card" @click="openCreateModal">
           <div class="create-content">
             <n-icon size="40" color="#ccc">
               <add-circle-outline />
@@ -26,15 +23,30 @@
           </div>
         </div>
         <!-- IP Cards -->
-        <div v-for="template in templates" :key="template.id" class="grid-item">
-          <ip-card :template="template" @click="handleCardClick(template)" />
+        <div v-for="item in ips" :key="item.id" class="grid-item">
+          <ip-card
+            :ip="item"
+            @click="handleCardClick(item)"
+            @edit="openEditModal"
+            @delete="handleDelete"
+          />
         </div>
       </div>
+
+      <div class="pagination-container" v-if="ips.length > 0 && total > 0">
+        <n-pagination
+          v-model:page="page"
+          :page-count="Math.ceil(total / pageSize)"
+          :page-size="pageSize"
+          @update:page="handlePageChange"
+        />
+      </div>
     </div>
-    
+
     <create-ip-modal
       v-model:show="showCreateModal"
-      @success="handleCreateSuccess"
+      :edit-data="editingIp"
+      @success="handleSuccess"
     />
   </div>
 </template>
@@ -42,26 +54,36 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { NSpin, NEmpty, NButton, NIcon } from 'naive-ui'
+import { NSpin, NEmpty, NButton, NIcon, NPagination, useDialog, useMessage } from 'naive-ui'
 import { AddCircleOutline } from '@vicons/ionicons5'
-import { getTemplates } from '@/api/template'
-import type { WownowTemplate } from '@/types/template'
+import { getIpList, deleteIp } from '@/api/ip'
+import type { IP } from '@/types/ip'
 import IpCard from './components/ip-card.vue'
 import CreateIpModal from './components/create-ip-modal.vue'
 
 const router = useRouter()
-const templates = ref<WownowTemplate[]>([])
+const dialog = useDialog()
+const message = useMessage()
+
+const ips = ref<IP[]>([])
 const loading = ref(false)
 const error = ref(false)
-const showCreateModal = ref(false)
 
-const fetchTemplates = async () => {
+const showCreateModal = ref(false)
+const editingIp = ref<IP | null>(null)
+
+const page = ref(1)
+const pageSize = ref(11)
+const total = ref(0)
+
+const fetchIps = async () => {
   loading.value = true
   error.value = false
   try {
-    const res = await getTemplates({ page: 1, pageSize: 100 }) // Fetch enough for demo
-    if (res.code === 0 && res.data?.list) {
-      templates.value = res.data.list
+    const res = await getIpList({ page: page.value, pageSize: pageSize.value, pagination: true })
+    if (res.code === 0 && res.data) {
+      ips.value = res.data.list || []
+      total.value = res.data.total || 0
     } else {
       error.value = true
     }
@@ -73,55 +95,85 @@ const fetchTemplates = async () => {
   }
 }
 
-const handleCardClick = (template: WownowTemplate) => {
-  router.push(`/workspace/${template.id}`)
+const handlePageChange = (p: number) => {
+  page.value = p
+  fetchIps()
 }
 
-const handleCreateSuccess = (newIp: { name: string; coverUrl: string }) => {
-  // Since we don't have a real create API, we'll manually add it to the list locally
-  // In a real app, we would reload the list or the API would return the full object
-  const mockTemplate: WownowTemplate = {
-    id: Date.now(), // Mock ID
-    name: newIp.name,
-    coverUrl: newIp.coverUrl,
-    createdAt: new Date(),
-    // ... fill other required fields with defaults
-    description: '',
-    styleId: 0,
-    shapeSize: '',
-    materialDescription: '',
-    threeDimensionUrls: [],
-    sceneDescription: '',
-    recommendCoverUrl: '',
-    prompt: '',
-    processOptions: [],
-    type: '',
-    craftType: '',
-    taskType: '',
-    label: '' as any,
-    isRecommended: false,
-    isDeleted: false,
-    status: 1,
-    sort: 0,
-    updatedAt: new Date(),
-    categoryName: '',
-    styleName: '',
-    orientation: 'horizontal' as any,
-    aspectRatio: '',
-    position: 'home_page',
-    info: null,
-  }
-  
-  templates.value.unshift(mockTemplate)
+const handleCardClick = (ip: IP) => {
+  router.push(`/workspace/${ip.id}`)
+}
+
+const openCreateModal = () => {
+  editingIp.value = null
+  showCreateModal.value = true
+}
+
+const openEditModal = (ip: IP) => {
+  editingIp.value = ip
+  showCreateModal.value = true
+}
+
+const handleDelete = (ip: IP) => {
+  dialog.warning({
+    title: 'Confirm Delete',
+    content: `Are you sure you want to delete IP "${ip.name}"?`,
+    positiveText: 'Confirm',
+    negativeText: 'Cancel',
+    onPositiveClick: async () => {
+      try {
+        const res = await deleteIp(ip.id)
+        if (res.code === 0) {
+          message.success('Delete successfully')
+          if (ips.value.length === 1 && page.value > 1) {
+            page.value -= 1
+          }
+          fetchIps()
+        } else {
+          message.error(res.msg || 'Delete failed')
+        }
+      } catch (err: any) {
+        console.error(err)
+        message.error('Delete failed')
+      }
+    },
+  })
+}
+
+const handleSuccess = () => {
+  fetchIps()
 }
 
 onMounted(() => {
-  fetchTemplates()
+  fetchIps()
 })
 </script>
 
 <style scoped>
-/* ... existing styles ... */
+.home-page {
+  min-height: 100vh;
+  background-color: var(--body-bg-color);
+  padding: 24px;
+}
+
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.ip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
 .create-card {
   height: 120px;
   border: 2px dashed var(--border-color);
@@ -151,36 +203,20 @@ onMounted(() => {
   color: var(--text-color-secondary);
   font-weight: 500;
 }
-.home-page {
-  min-height: 100vh;
-  background-color: var(--body-bg-color);
-  padding: 24px;
-}
-
-.content-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 24px;
-}
-
-.ip-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-}
 
 .loading-state,
 .error-state,
 .empty-state {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 400px;
+}
+
+.pagination-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
 }
 </style>

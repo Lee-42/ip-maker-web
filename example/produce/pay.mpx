@@ -260,7 +260,7 @@ createPage({
             id: nfcId,
             type,
             link: linkVal,
-            text: text || (type === 'custom' ? `WOWNOW (${new Date().toISOString().split('T')[0]})` : ''),
+            text: text || (type === 'custom' ? `IPMAKER (${new Date().toISOString().split('T')[0]})` : ''),
             attachments,
             assetId: this.assetId || undefined,
           } as NFCContent;

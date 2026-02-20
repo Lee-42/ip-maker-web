@@ -2,10 +2,9 @@ import { apiClient, type APIResponse } from '@/utils/api-client'
 import type {
   TemplateListReq,
   PromptStyleLstReq,
-  IpTemplate,
   WownowPromptStyle,
   TemplateTagOption,
-  WownowTemplate, // Add WownowTemplate to the import list
+  WownowTemplate,
 } from '@/types/template'
 import type { PageRes } from './asset'
 
