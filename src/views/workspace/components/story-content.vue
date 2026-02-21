@@ -2,7 +2,7 @@
   <div class="story-content">
     <h1 class="story-title">{{ story.title }}</h1>
     <div class="story-meta">
-      <span class="date">{{ story.date }}</span>
+      <span class="date">{{ story.updatedAt?.split('T')[0] || story.createdAt?.split('T')[0] }}</span>
     </div>
     <n-divider />
     <div class="content-body">
@@ -13,13 +13,7 @@
 
 <script setup lang="ts">
 import { NDivider } from 'naive-ui'
-
-interface Story {
-  id: number
-  title: string
-  content: string
-  date: string
-}
+import type { Story } from '@/types/story'
 
 defineProps<{
   story: Story

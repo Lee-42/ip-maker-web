@@ -29,7 +29,7 @@
       >
         <div class="story-content-wrapper">
           <div class="story-title">{{ story.title }}</div>
-          <div class="story-date">{{ story.date }}</div>
+          <div class="story-date">{{ story.updatedAt?.split('T')[0] || story.createdAt?.split('T')[0] }}</div>
         </div>
         <div class="actions">
           <div class="action-btn edit-btn" @click.stop="$emit('edit', story)">
@@ -51,13 +51,7 @@
 <script setup lang="ts">
 import { NButton, NIcon } from 'naive-ui'
 import { ArrowBack, AddCircleOutline, CreateOutline, TrashOutline } from '@vicons/ionicons5'
-
-interface Story {
-  id: number
-  title: string
-  content: string
-  date: string
-}
+import type { Story } from '@/types/story'
 
 defineProps<{
   stories: Story[]

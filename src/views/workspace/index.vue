@@ -34,7 +34,8 @@
 
     <create-story-modal
       v-model:show="showCreateModal"
-      :initial-title="editingStory?.title"
+      :ip-id="ipId"
+      :edit-data="editingStory"
       @success="handleCreateSuccess"
     />
   </div>
@@ -48,40 +49,16 @@ import StoryList from './components/story-list.vue'
 import StoryContent from './components/story-content.vue'
 import ChatPanel from './components/chat-panel.vue'
 import CreateStoryModal from './components/create-story-modal.vue'
-
-// Mock Data
-interface Story {
-  id: number
-  title: string
-  content: string
-  date: string
-}
-
-const mockStories: Story[] = [
-  {
-    id: 1,
-    title: 'The Origin of the IP',
-    content: 'This IP was created in 2023 with the vision of...',
-    date: '2023-01-15',
-  },
-  {
-    id: 2,
-    title: 'Character Development',
-    content: 'The main character evolved through several iterations...',
-    date: '2023-02-20',
-  },
-  {
-    id: 3,
-    title: 'World Building',
-    content: 'The world represents a futuristic utopia where...',
-    date: '2023-03-10',
-  },
-]
+import { getStoryList, deleteStory } from '@/api/story'
+import type { Story } from '@/types/story'
 
 const route = useRoute()
 const router = useRouter()
-const stories = ref<Story[]>(mockStories)
+const ipId = Number(route.params.id)
+
+const stories = ref<Story[]>([])
 const currentStoryId = ref<number | null>(null)
+const loading = ref(false)
 
 const currentStory = computed(() =>
   stories.value.find((s) => s.id === currentStoryId.value)
@@ -95,11 +72,27 @@ const handleBack = () => {
   router.push('/home')
 }
 
-onMounted(() => {
-  // Select first story by default
-  if (stories.value.length > 0 && stories.value[0]) {
-    currentStoryId.value = stories.value[0].id
+const fetchStories = async () => {
+  loading.value = true
+  try {
+    const res = await getStoryList({ ipId, page: 1, pageSize: 100, pagination: false })
+    if (res.code === 0 && res.data) {
+      stories.value = res.data.list || []
+      if (!currentStoryId.value && stories.value.length > 0) {
+        currentStoryId.value = stories.value[0].id
+      } else if (currentStoryId.value && !stories.value.find(s => s.id === currentStoryId.value)) {
+        currentStoryId.value = stories.value.length > 0 ? stories.value[0].id : null
+      }
+    }
+  } catch (err) {
+    console.error(err)
+  } finally {
+    loading.value = false
   }
+}
+
+onMounted(() => {
+  fetchStories()
 })
 
 // Create/Edit Story Logic
@@ -124,39 +117,28 @@ const handleDeleteStory = (story: Story) => {
     content: `Are you sure you want to delete "${story.title}"?`,
     positiveText: 'Delete',
     negativeText: 'Cancel',
-    onPositiveClick: () => {
-      const index = stories.value.findIndex((s) => s.id === story.id)
-      if (index > -1) {
-        stories.value.splice(index, 1)
-        if (currentStoryId.value === story.id) {
-          const nextStory = stories.value.length > 0 ? stories.value[0] : null
-          currentStoryId.value = nextStory ? nextStory.id : null
+    onPositiveClick: async () => {
+      try {
+        const res = await deleteStory(story.id)
+        if (res.code === 0) {
+          message.success('Story deleted')
+          if (currentStoryId.value === story.id) {
+            currentStoryId.value = null
+          }
+          fetchStories()
+        } else {
+          message.error(res.message || 'Delete failed')
         }
-        message.success('Story deleted')
+      } catch (err) {
+        console.error(err)
+        message.error('Delete failed')
       }
     },
   })
 }
 
-const handleCreateSuccess = (title: string) => {
-  if (editingStory.value) {
-    // Edit mode
-    const story = stories.value.find((s) => s.id === editingStory.value!.id)
-    if (story) {
-      story.title = title
-    }
-  } else {
-    // Create mode
-    const newStory: Story = {
-      id: Date.now(),
-      title: title,
-      content: 'Start writing your story here...',
-      date: new Date().toISOString().split('T')[0] || new Date().toDateString(),
-    }
-    stories.value.unshift(newStory)
-    currentStoryId.value = newStory.id
-  }
-  editingStory.value = null
+const handleCreateSuccess = () => {
+  fetchStories()
 }
 
 // Resizable Columns Logic

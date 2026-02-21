@@ -70,12 +70,7 @@ export function smsLogin(
 export function passwordLogin(
   data: PasswordLoginRequest,
 ): Promise<APIResponse<{ token: string; user: UserInfo }>> {
-  return apiClient.post<{ token: string; user: UserInfo }>(
-    '/v1/auth/login',
-    data,
-    undefined,
-    true,
-  )
+  return apiClient.post<{ token: string; user: UserInfo }>('/v1/auth/login', data, undefined, true)
 }
 
 // 获取微信登录二维码

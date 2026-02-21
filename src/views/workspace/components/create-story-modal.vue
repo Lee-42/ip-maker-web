@@ -37,22 +37,25 @@
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue'
 import { NModal, NForm, NFormItem, NInput, NButton, useMessage, type FormInst, type FormRules } from 'naive-ui'
+import { createStory, updateStory } from '@/api/story'
+import type { Story } from '@/types/story'
 
 const props = defineProps<{
   show: boolean
-  initialTitle?: string
+  ipId: number
+  editData?: Story | null
 }>()
 
 const emit = defineEmits<{
   (e: 'update:show', value: boolean): void
-  (e: 'success', title: string): void
+  (e: 'success'): void
 }>()
 
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const loading = ref(false)
 
-const isEdit = computed(() => !!props.initialTitle)
+const isEdit = computed(() => !!props.editData)
 
 const formValue = reactive({
   title: '',
@@ -62,7 +65,11 @@ watch(
   () => props.show,
   (newVal) => {
     if (newVal) {
-      formValue.title = props.initialTitle || ''
+      if (props.editData) {
+        formValue.title = props.editData.title
+      } else {
+        formValue.title = ''
+      }
     }
   }
 )
@@ -79,20 +86,40 @@ const handleCancel = () => {
   emit('update:show', false)
 }
 
-const handleCreate = (e?: Event) => {
+const handleCreate = async (e?: Event) => {
   e?.preventDefault()
-  formRef.value?.validate((errors) => {
+  formRef.value?.validate(async (errors) => {
     if (!errors) {
       loading.value = true
-      // Simulate API call
-      setTimeout(() => {
-        message.success(isEdit.value ? 'Story Updated Successfully' : 'Story Created Successfully')
-        emit('success', formValue.title)
-        emit('update:show', false)
+      try {
+        let res
+        if (isEdit.value && props.editData) {
+          res = await updateStory({
+            ...props.editData,
+            title: formValue.title,
+          })
+        } else {
+          res = await createStory({
+            ipId: props.ipId,
+            title: formValue.title,
+            content: 'Start writing your story here...',
+          })
+        }
+        
+        if (res.code === 0) {
+          message.success(isEdit.value ? 'Story Updated Successfully' : 'Story Created Successfully')
+          emit('success')
+          emit('update:show', false)
+          formValue.title = ''
+        } else {
+          message.error(res.message || 'Operation failed')
+        }
+      } catch (err: any) {
+        console.error(err)
+        message.error('Operation failed')
+      } finally {
         loading.value = false
-        // Reset form
-        formValue.title = ''
-      }, 500)
+      }
     } else {
       message.error('Please verify input')
     }
