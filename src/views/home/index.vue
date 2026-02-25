@@ -130,11 +130,11 @@ const handleDelete = (ip: IP) => {
           }
           fetchIps()
         } else {
-          message.error(res.msg || 'Delete failed')
+          message.error(res.message || 'Delete failed')
         }
       } catch (err: any) {
         console.error(err)
-        message.error('Delete failed')
+        message.error(err.message || 'Delete failed')
       }
     },
   })

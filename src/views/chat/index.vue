@@ -52,15 +52,18 @@ import PromptSelector from './components/prompt-selector.vue'
 import StyleSelector from './components/style-selector.vue'
 import type { WownowPromptStyle } from '@/types/template'
 import { getProductShape } from '@/utils/common'
+import { getChatMessageList, type Message } from '@/api/chat'
+import type { APIResponse } from '@/utils/api-client'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const chatStore = useChatStore()
 const agentUIRef = ref<InstanceType<typeof AgentUI> | null>(null)
 const scrollContainer = ref<HTMLElement | null>(null)
-
+console.log('12312312312')
 // 当页面挂载时（包括从其他页面返回），滚动到底部
 onMounted(() => {
+
   // 等待 DOM 完全渲染
   setTimeout(() => {
     nextTick(() => {
@@ -188,6 +191,7 @@ const handleChatRecordsChange = (records: ChatRecord[]) => {
 
 // 处理图片点击
 const handleImageTap = (imageUrl: string) => {
+  console.log('imageUrl: ', imageUrl)
   if (agentUIRef.value?.isAiTyping) return
   // router.push({
   //   path: '/create/preview',
@@ -213,11 +217,11 @@ const handlePromptSelectorClose = () => {
 // 返回
 const onBack = async () => {
   const doBack = () => {
-      // 中断当前请求
-      agentUIRef.value?.abortRequest()
-      // 用户确认后执行清空和返回
-      chatStore.resetChatStore()
-      router.back()
+    // 中断当前请求
+    agentUIRef.value?.abortRequest()
+    // 用户确认后执行清空和返回
+    chatStore.resetChatStore()
+    router.back()
   }
 
   // 如果没有聊天记录，直接返回

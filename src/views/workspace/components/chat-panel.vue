@@ -35,6 +35,9 @@ import PromptSelector from '@/views/chat/components/prompt-selector.vue'
 import StyleSelector from '@/views/chat/components/style-selector.vue'
 import type { WownowPromptStyle } from '@/types/template'
 import { getProductShape } from '@/utils/common'
+import { getChatMessageList, type Message } from '@/api/chat'
+import type { APIResponse } from '@/utils/api-client'
+import { mapToChatRecord } from '@/utils/chat'
 
 // const router = useRouter() // Router is not used for back navigation in panel
 const authStore = useAuthStore()
@@ -44,6 +47,14 @@ const scrollContainer = ref<HTMLElement | null>(null)
 
 // 当页面挂载时（包括从其他页面返回），滚动到底部
 onMounted(() => {
+  getChatMessageList({ id: 'b84f5a39-5d86-4d51-99b3-e9630a123ca1' }).then(
+    (res: APIResponse<Message[]>) => {
+      const records: ChatRecord[] = res.map(mapToChatRecord) || []
+      console.log('getChatMessageList: ', res)
+      console.log('records: ', records)
+      chatStore.setChatRecord(records)
+    },
+  )
   // 等待 DOM 完全渲染
   setTimeout(() => {
     nextTick(() => {

@@ -17,7 +17,7 @@ interface RequestOptions {
   skipAuth?: boolean // 跳过认证
 }
 
-class APIClient {
+export class APIClient {
   private baseURL: string
 
   constructor(baseURL = '') {

@@ -18,7 +18,7 @@ export interface IPListRes {
 
 // 列表查询
 export function getIpList(params: IPListReq): Promise<APIResponse<IPListRes>> {
-  return apiClient.get<IPListRes>('/ip/list', { params })
+  return apiClient.get<IPListRes>('/ip/list', { params: { ...params } })
 }
 
 // 创建 IP
@@ -37,3 +37,4 @@ export function updateIp(data: Partial<IP> & { id: number }): Promise<APIRespons
 export function deleteIp(id: number): Promise<APIResponse<{ id: number }>> {
   return apiClient.post<{ id: number }>('/ip/delete', { id })
 }
+
