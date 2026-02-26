@@ -22,8 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useChatStore } from '@/stores/chat'
 import AgentUI from '@/components/agent-ui/index.vue'
@@ -31,10 +30,6 @@ import type { ChatRecord, GenerateImageOptions } from '@/components/agent-ui/typ
 import { COIN_NEGATIVE_PROMPT, IPMAKER_CHAT_URL, productTypeOptions } from '@/lib/constants'
 import { TemplateLabel } from '@/types/template'
 import { OrientationType } from '@/types/asset'
-import PromptSelector from '@/views/chat/components/prompt-selector.vue'
-import StyleSelector from '@/views/chat/components/style-selector.vue'
-import type { WownowPromptStyle } from '@/types/template'
-import { getProductShape } from '@/utils/common'
 import { getChatMessageList, type Message } from '@/api/chat'
 import type { APIResponse } from '@/utils/api-client'
 import { mapToChatRecord } from '@/utils/chat'
@@ -45,23 +40,50 @@ const chatStore = useChatStore()
 const agentUIRef = ref<InstanceType<typeof AgentUI> | null>(null)
 const scrollContainer = ref<HTMLElement | null>(null)
 
-// 当页面挂载时（包括从其他页面返回），滚动到底部
-onMounted(() => {
-  getChatMessageList({ id: 'b84f5a39-5d86-4d51-99b3-e9630a123ca1' }).then(
-    (res: APIResponse<Message[]>) => {
-      const records: ChatRecord[] = res.map(mapToChatRecord) || []
-      console.log('getChatMessageList: ', res)
+// 加载聊天记录的逻辑
+const loadChatMessages = (chatId: string) => {
+  if (!chatId) return
+
+  getChatMessageList({ id: chatId })
+    .then((res: APIResponse<Message[]>) => {
+      const records: ChatRecord[] = res.data?.map(mapToChatRecord) || []
       console.log('records: ', records)
       chatStore.setChatRecord(records)
-    },
-  )
-  // 等待 DOM 完全渲染
+
+      // 等待 DOM 完全渲染后再滚动到底部
+      setTimeout(() => {
+        nextTick(() => {
+          scrollContainer.value = agentUIRef.value?.getScrollContainer() || null
+          if (chatStore.chatRecords.length > 0) {
+            agentUIRef.value?.scrollToBottom()
+          }
+        })
+      }, 100)
+    })
+    .catch((err) => {
+      console.error('Failed to load chat messages:', err)
+    })
+}
+
+// 监听 CHAT_ID 变化，自动拉取对应的聊天记录
+watch(
+  () => chatStore.CHAT_ID,
+  (newChatId) => {
+    if (newChatId) {
+      loadChatMessages(newChatId)
+    }
+  },
+  { immediate: true },
+)
+
+// 组件挂载时不再执行硬编码请求，交由 watch({ immediate: true }) 处理
+onMounted(() => {
+  // DOM 渲染后的初始滚动等逻辑依然保留，如果在没完全渲染好时也可以进行滚动尝试
   setTimeout(() => {
     nextTick(() => {
-      // 获取滚动容器
-      scrollContainer.value = agentUIRef.value?.getScrollContainer() || null
-
-      // 如果有聊天记录，滚动到底部
+      if (!scrollContainer.value) {
+        scrollContainer.value = agentUIRef.value?.getScrollContainer() || null
+      }
       if (chatStore.chatRecords.length > 0) {
         agentUIRef.value?.scrollToBottom()
       }
@@ -73,7 +95,6 @@ const token = computed(() => authStore.token)
 const chatTemplate = computed(() => chatStore.chatTemplate)
 const promptStyle = computed(() => chatStore.promptStyle)
 const templatePrompt = computed(() => chatStore.templatePrompt)
-const prompts = computed(() => chatStore.prompts)
 const apiUrl = IPMAKER_CHAT_URL + '/v1/chat'
 
 // 根据 chatTemplate 计算 generateImageOptions
@@ -169,19 +190,6 @@ const handleImageTap = (imageUrl: string) => {
   if (agentUIRef.value?.isAiTyping) return
   // Handle image tap (e.g., preview or insert into story)
   console.log('Image tapped:', imageUrl)
-}
-
-// 处理风格变化
-const handleStyleChange = (style: WownowPromptStyle) => {
-  chatStore.setPromptStyle(style)
-}
-
-// 处理 prompt selector 关闭
-const handlePromptSelectorClose = () => {
-  // 只有当选择的 prompts 数量大于 0 时才 focus
-  if (prompts.value.length > 0) {
-    agentUIRef.value?.focusInput()
-  }
 }
 </script>
 

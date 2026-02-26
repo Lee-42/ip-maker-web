@@ -51,21 +51,24 @@ import ChatPanel from './components/chat-panel.vue'
 import CreateStoryModal from './components/create-story-modal.vue'
 import { getStoryList, deleteStory } from '@/api/story'
 import type { Story } from '@/types/story'
+import { useChatStore } from '@/stores/chat'
 
 const route = useRoute()
 const router = useRouter()
 const ipId = Number(route.params.id)
 
+const chatStore = useChatStore()
 const stories = ref<Story[]>([])
 const currentStoryId = ref<number | null>(null)
 const loading = ref(false)
 
-const currentStory = computed(() =>
-  stories.value.find((s) => s.id === currentStoryId.value)
-)
+const currentStory = computed(() => stories.value.find((s) => s.id === currentStoryId.value))
 
 const handleStorySelect = (story: Story) => {
   currentStoryId.value = story.id
+  if (story.chatId) {
+    chatStore.CHAT_ID = String(story.chatId)
+  }
 }
 
 const handleBack = () => {
@@ -79,9 +82,24 @@ const fetchStories = async () => {
     if (res.code === 0 && res.data) {
       stories.value = res.data.list || []
       if (!currentStoryId.value && stories.value.length > 0) {
-        currentStoryId.value = stories.value[0].id
-      } else if (currentStoryId.value && !stories.value.find(s => s.id === currentStoryId.value)) {
-        currentStoryId.value = stories.value.length > 0 ? stories.value[0].id : null
+        currentStoryId.value = stories.value[0]?.id || null
+        if (stories.value[0]?.chatId) {
+          chatStore.CHAT_ID = String(stories.value[0].chatId)
+        }
+      } else if (
+        currentStoryId.value &&
+        !stories.value.find((s) => s.id === currentStoryId.value)
+      ) {
+        currentStoryId.value = stories.value.length > 0 ? stories.value[0]?.id || null : null
+        if (stories.value.length > 0 && stories.value[0]?.chatId) {
+          chatStore.CHAT_ID = String(stories.value[0].chatId)
+        }
+      } else if (currentStoryId.value) {
+        // Sync chat ID for existing selected story
+        const current = stories.value.find((s) => s.id === currentStoryId.value)
+        if (current?.chatId) {
+          chatStore.CHAT_ID = String(current.chatId)
+        }
       }
     }
   } catch (err) {
