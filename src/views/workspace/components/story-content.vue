@@ -2,7 +2,9 @@
   <div class="story-content">
     <h1 class="story-title">{{ story.title }}</h1>
     <div class="story-meta">
-      <span class="date">{{ story.updatedAt?.split('T')[0] || story.createdAt?.split('T')[0] }}</span>
+      <span class="date">{{
+        story.updatedAt?.split('T')[0] || story.createdAt?.split('T')[0]
+      }}</span>
     </div>
     <n-divider />
     <div class="content-body">

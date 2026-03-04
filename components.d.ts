@@ -11,6 +11,7 @@ declare module 'vue' {
     CouponCard: typeof import('./src/components/coupon-selector/coupon-card.vue')['default']
     CouponSelector: typeof import('./src/components/coupon-selector/index.vue')['default']
     ImageUpload: typeof import('./src/components/agent-ui/image-upload.vue')['default']
+    Inspo: typeof import('./src/components/inspo.vue')['default']
     LoginModal: typeof import('./src/components/login-modal.vue')['default']
     MessageList: typeof import('./src/components/agent-ui/message-list.vue')['default']
     NavBar: typeof import('./src/components/nav-bar.vue')['default']

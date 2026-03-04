@@ -12,8 +12,9 @@
       />
     </div>
     <div class="middle-column">
-      <div class="column-header">
+      <div class="column-header" style="justify-content: space-between">
         <h2 class="column-title">Writer</h2>
+        <inspo />
       </div>
       <div class="column-content">
         <story-content v-if="currentStory" :story="currentStory" />
@@ -49,6 +50,7 @@ import StoryList from './components/story-list.vue'
 import StoryContent from './components/story-content.vue'
 import ChatPanel from './components/chat-panel.vue'
 import CreateStoryModal from './components/create-story-modal.vue'
+import Inspo from '@/components/inspo.vue'
 import { getStoryList, deleteStory } from '@/api/story'
 import type { Story } from '@/types/story'
 import { useChatStore } from '@/stores/chat'
